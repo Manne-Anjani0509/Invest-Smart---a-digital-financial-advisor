@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Your Recommendation</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="container" style="position: relative;">
+    <div style="position: absolute; top: 15px; right: 20px;">
+        <a href="/logout" style="color: #e74c3c; text-decoration: none; font-weight: bold;"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </div>
+    <h1>📈 Investment Result</h1>
+    
+    {% if risk_level %}
+    <div class="result-box" style="background-color: #fff3cd; border-left-color: #f39c12;">
+        <p style="margin-top: 0; color: #d35400; text-transform: uppercase; font-size: 14px; font-weight: bold; margin-bottom: 20px;">Investment Risk Profile</p>
+        <p style="font-size: 18px; margin-bottom: 5px;"><strong>Risk Level:</strong> {{ risk_level }}</p>
+        <p style="font-size: 18px; margin-bottom: 15px;"><strong>Investor Type:</strong> {{ risk_label }}</p>
+        
+        <p style="font-size: 16px; margin: 0; font-weight: bold;">Risk Meter:</p>
+        <p style="font-size: 24px; color: #e67e22; letter-spacing: 2px; margin: 5px 0;">
+            <span style="font-size: 14px; color: #7f8c8d; vertical-align: middle;">Low | </span>
+            {{ risk_meter }}
+            <span style="font-size: 14px; color: #7f8c8d; vertical-align: middle;"> | High</span>
+        </p>
+    </div>
+    {% endif %}
+    
+    <div class="result-box" style="background-color: #e8f4f8; border-left-color: #3498db;">
+        <p style="margin-top: 0; color: #3498db; text-transform: uppercase; font-size: 14px; font-weight: bold; margin-bottom: 10px;">Investment Details</p>
+        <p style="font-size: 18px; margin-bottom: 5px;"><strong>Investment Frequency:</strong> {{ frequency }}</p>
+        <p style="font-size: 18px; margin-bottom: 5px;"><strong>{{ frequency }} Investment:</strong> ₹{{ investment_amount }}</p>
+        <p style="font-size: 18px; margin-bottom: 10px;"><strong>Monthly Equivalent:</strong> ₹{{ monthly_equivalent }}</p>
+    </div>
+    
+    <div class="result-box">
+        {% if portfolio %}
+            <p style="margin-top: 0; color: #7f8c8d; text-transform: uppercase; font-size: 14px; font-weight: bold; margin-bottom: 20px;"><i class="fas fa-chart-pie" style="color:#2a7de1;"></i> Recommended Investment Portfolio</p>
+            {% for asset, p_data in portfolio.items() %}
+                <p class="prediction-text" style="font-size: 20px; margin-bottom: 10px;">{{ asset }} &rarr; {{ p_data.percent }}% &rarr; ₹{{ p_data.amount }}</p>
+            {% endfor %}
+            <div style="width: 100%; max-width: 300px; margin: 20px auto;">
+                <canvas id="portfolioChart"></canvas>
+            </div>
+        {% else %}
+            <p style="margin-top: 0; color: #7f8c8d; text-transform: uppercase; font-size: 14px; font-weight: bold;">Recommended Strategy</p>
+            <p class="prediction-text">{{ prediction }}</p>
+        {% endif %}
+    </div>
+
+    <!-- SIP Growth Summary -->
+    <div class="result-box" style="background: linear-gradient(135deg, #e8fff5, #f0faf5); border-left-color: #00c9a7;">
+        <p style="margin-top: 0; color: #00a085; text-transform: uppercase; font-size: 14px; font-weight: bold; margin-bottom: 15px;">
+            <i class="fas fa-seedling"></i> SIP Growth Summary (12% p.a.)
+        </p>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; text-align: center;">
+            <div style="background: white; border-radius: 10px; padding: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
+                <p style="margin: 0; font-size: 13px; color: #7f8c8d;">Total Invested</p>
+                <p style="margin: 6px 0 0; font-size: 22px; font-weight: bold; color: #1f3c88;">₹{{ sip_invested }}</p>
+            </div>
+            <div style="background: white; border-radius: 10px; padding: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
+                <p style="margin: 0; font-size: 13px; color: #7f8c8d;">Expected Value</p>
+                <p style="margin: 6px 0 0; font-size: 22px; font-weight: bold; color: #3a7bd5;">₹{{ sip_fv }}</p>
+            </div>
+            <div style="background: white; border-radius: 10px; padding: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
+                <p style="margin: 0; font-size: 13px; color: #7f8c8d;">Estimated Profit</p>
+                <p style="margin: 6px 0 0; font-size: 22px; font-weight: bold; color: #00a085;">₹{{ sip_profit }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div style="display: flex; gap: 12px; margin-top: 20px;">
+        <a href="/" class="back-btn" style="flex: 1;">Try Another Profile</a>
+        <a href="/dashboard" class="back-btn" style="flex: 1; background: linear-gradient(135deg, #1f3c88, #3a7bd5);">📊 View History</a>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    {% if portfolio %}
+    document.addEventListener("DOMContentLoaded", function() {
+        const ctx = document.getElementById('portfolioChart').getContext('2d');
+        const data = {
+            labels: [
+                {% for asset in portfolio.keys() %}
+                    "{{ asset }}",
+                {% endfor %}
+            ],
+            datasets: [{
+                data: [
+                    {% for p_data in portfolio.values() %}
+                        {{ p_data.percent }},
+                    {% endfor %}
+                ],
+                backgroundColor: [
+                    '#3498db', '#2ecc71', '#f1c40f', '#e74c3c', 
+                    '#9b59b6', '#34495e', '#1abc9c', '#e67e22', '#7f8c8d'
+                ],
+                borderWidth: 1
+            }]
+        };
+        
+        new Chart(ctx, {
+            type: 'pie',
+            data: data,
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                    }
+                }
+            }
+        });
+    });
+    {% endif %}
+</script>
+</body>
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Financial Assistant Chatbot</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="container">
+    <h1>🤖 Financial Assistant</h1>
+    <p style="text-align: center; margin-bottom: 25px; color: var(--text-muted);">Ask me a question about basic investment concepts to learn more.</p>
+    
+    <form action="/chatbot" method="POST">
+        <div class="form-group">
+            <label for="question">Your Question:</label>
+            <input type="text" id="question" name="question" required placeholder="e.g. What is an emergency fund?">
+        </div>
+        <button type="submit">Ask Chatbot</button>
+    </form>
+
+    {% if response %}
+    <div class="chat-container">
+        <div class="chat-bubble chat-user">{{ question }}</div>
+        <div class="chat-bubble chat-ai"><i class="fas fa-robot" style="color: var(--secondary-color);"></i> <strong>AI:</strong> {{ response }}</div>
+    </div>
+    {% endif %}
+
+    <a href="/" class="back-btn">Back to Investment Advisor</a>
+</div>
+
+</body>
+</html>

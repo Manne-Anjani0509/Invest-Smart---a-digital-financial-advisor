@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Investment History Dashboard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        body { align-items: flex-start; }
+        .dashboard-wrapper {
+            max-width: 900px;
+            width: 100%;
+            margin: 0 auto;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+        .stat-card {
+            background: white;
+            border-radius: 14px;
+            padding: 20px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        .stat-card:hover { transform: translateY(-4px); }
+        .stat-card .stat-number {
+            font-size: 28px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        .stat-card .stat-label {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+        .history-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+        .history-card-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 18px 24px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        thead tr {
+            background: #f4f6fb;
+        }
+        th {
+            padding: 14px 18px;
+            text-align: left;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        td {
+            padding: 14px 18px;
+            font-size: 15px;
+            border-bottom: 1px solid #f0f2f8;
+        }
+        tbody tr:last-child td { border-bottom: none; }
+        tbody tr:hover { background: #f8f9ff; }
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+        .badge-low    { background: #e8f5e9; color: #2e7d32; }
+        .badge-medium { background: #fff3e0; color: #e65100; }
+        .badge-high   { background: #fdeaea; color: #c62828; }
+        .empty-state {
+            padding: 60px;
+            text-align: center;
+            color: var(--text-muted);
+        }
+        .empty-state i { font-size: 48px; margin-bottom: 16px; color: #dce1f0; }
+        .nav-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+        .nav-bar h1 { margin: 0; font-size: 26px; color: white; }
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            margin-left: 20px;
+            font-weight: 600;
+            opacity: 0.9;
+            transition: opacity 0.2s;
+        }
+        .nav-links a:hover { opacity: 1; }
+    </style>
+</head>
+<body>
+<div class="dashboard-wrapper">
+
+    <div class="nav-bar">
+        <h1>📊 Investment History</h1>
+        <div class="nav-links">
+            <a href="/"><i class="fas fa-home"></i> Home</a>
+            <a href="/chatbot"><i class="fas fa-robot"></i> Chatbot</a>
+            <a href="/logout" style="color: #f8c8c8;"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+    </div>
+
+    <!-- Stats Row -->
+    {% if history %}
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-number">{{ history | length }}</div>
+            <div class="stat-label">Total Predictions</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">₹{{ history[0].amount }}</div>
+            <div class="stat-label">Last Investment</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">{{ history[0].risk_level }}</div>
+            <div class="stat-label">Last Risk Level</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">{{ history[0].duration }}m</div>
+            <div class="stat-label">Last Duration</div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- History Table -->
+    <div class="history-card">
+        <div class="history-card-header">
+            <i class="fas fa-history"></i> Your Investment Recommendations
+        </div>
+
+        {% if history %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Monthly Amount</th>
+                    <th>Risk Level</th>
+                    <th>Duration</th>
+                    <th>Recommendation</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in history %}
+                <tr>
+                    <td><i class="fas fa-calendar-alt" style="color: var(--secondary-color); margin-right: 6px;"></i>{{ row.date }}</td>
+                    <td><strong>₹{{ row.amount }}</strong></td>
+                    <td>
+                        {% if row.risk_level == 'Low' %}
+                            <span class="badge badge-low">🟢 Low</span>
+                        {% elif row.risk_level == 'Medium' %}
+                            <span class="badge badge-medium">🟡 Medium</span>
+                        {% else %}
+                            <span class="badge badge-high">🔴 High</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ row.duration }} months</td>
+                    <td>{{ row.recommendation }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="empty-state">
+            <i class="fas fa-chart-bar"></i>
+            <p>No investment history yet.</p>
+            <a href="/" style="color: var(--secondary-color); font-weight: bold;">Make your first prediction →</a>
+        </div>
+        {% endif %}
+    </div>
+
+    <div style="text-align:center; margin-top: 24px;">
+        <a href="/" class="back-btn" style="display: inline-block; width: auto; padding: 12px 32px;">← Back to Advisor</a>
+    </div>
+
+</div>
+</body>
+</html>
