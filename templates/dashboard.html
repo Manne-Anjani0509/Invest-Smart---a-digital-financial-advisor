@@ -2,74 +2,285 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Investment History Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard – InvestSmart</title>
+    <meta name="description" content="InvestSmart Dashboard – View investment history and get portfolio recommendations.">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <style>
-        body { align-items: flex-start; }
+        /* ── Reset body for dashboard layout ── */
+        body {
+            font-family: 'Poppins', sans-serif;
+            align-items: flex-start;
+            padding: 20px;
+        }
+
         .dashboard-wrapper {
-            max-width: 900px;
+            max-width: 960px;
             width: 100%;
             margin: 0 auto;
         }
+
+        /* ── Nav Bar ── */
+        .nav-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .nav-bar h1 {
+            margin: 0;
+            font-size: 24px;
+            color: white;
+            font-weight: 700;
+        }
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            margin-left: 20px;
+            font-weight: 500;
+            opacity: 0.85;
+            transition: opacity 0.2s;
+            font-size: 14px;
+        }
+        .nav-links a:hover { opacity: 1; }
+
+        /* ── Greeting Banner ── */
+        .greeting-banner {
+            background: rgba(255,255,255,0.10);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 18px;
+            padding: 22px 28px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+        }
+        .greeting-icon {
+            font-size: 42px;
+            line-height: 1;
+            flex-shrink: 0;
+        }
+        .greeting-text h2 {
+            font-size: 22px;
+            font-weight: 700;
+            color: #ffffff;
+            margin: 0 0 4px 0;
+        }
+        .greeting-text p {
+            font-size: 13px;
+            color: rgba(255,255,255,0.6);
+            margin: 0;
+        }
+
+        /* ── Stats Grid ── */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
             gap: 16px;
-            margin-bottom: 28px;
+            margin-bottom: 26px;
         }
         .stat-card {
             background: white;
-            border-radius: 14px;
-            padding: 20px;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+            border-radius: 16px;
+            padding: 22px 20px;
+            box-shadow: 0 4px 18px rgba(0,0,0,0.08);
             text-align: center;
-            transition: transform 0.3s ease;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
-        .stat-card:hover { transform: translateY(-4px); }
-        .stat-card .stat-number {
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 28px rgba(0,0,0,0.13);
+        }
+        .stat-number {
             font-size: 28px;
-            font-weight: bold;
+            font-weight: 700;
             color: var(--primary-color);
         }
-        .stat-card .stat-label {
-            font-size: 13px;
+        .stat-label {
+            font-size: 12px;
             color: var(--text-muted);
-            margin-top: 4px;
+            margin-top: 5px;
+            font-weight: 500;
         }
+
+        /* ── Two-column layout ── */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 22px;
+            margin-bottom: 22px;
+        }
+        @media (max-width: 720px) {
+            .main-grid { grid-template-columns: 1fr; }
+        }
+
+        /* ── Section card ── */
+        .section-card {
+            background: white;
+            border-radius: 18px;
+            box-shadow: 0 6px 24px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+        .section-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 16px 22px;
+            font-size: 16px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .section-body {
+            padding: 22px;
+        }
+
+        /* ── Portfolio Recommendation form ── */
+        .rec-form .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            margin-bottom: 14px;
+        }
+        .rec-form .form-group {
+            margin-bottom: 0;
+        }
+        .rec-form label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+        .rec-form input,
+        .rec-form select {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1.5px solid #e0e6f0;
+            border-radius: 10px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            color: #333;
+            background: #fafbfd;
+            transition: border-color 0.25s, box-shadow 0.25s;
+            outline: none;
+            margin-top: 0;
+        }
+        .rec-form input:focus,
+        .rec-form select:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 3px rgba(58,123,213,0.12);
+            background: #fff;
+            transform: none;
+        }
+        .rec-btn {
+            width: 100%;
+            padding: 11px;
+            background: linear-gradient(135deg, #00c9a7, #3a7bd5);
+            color: white;
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-top: 6px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 14px rgba(0,201,167,0.3);
+        }
+        .rec-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 22px rgba(0,201,167,0.45);
+            filter: brightness(1.05);
+        }
+        .rec-btn:active { transform: translateY(0); }
+
+        /* ── Portfolio result ── */
+        #portfolio-result { display: none; margin-top: 20px; }
+        .portfolio-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .alloc-bar-wrap {
+            margin-bottom: 13px;
+        }
+        .alloc-label-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            font-weight: 500;
+            color: #444;
+            margin-bottom: 5px;
+        }
+        .alloc-bar-bg {
+            height: 10px;
+            border-radius: 99px;
+            background: #edf0f8;
+            overflow: hidden;
+        }
+        .alloc-bar-fill {
+            height: 100%;
+            border-radius: 99px;
+            transition: width 0.9s cubic-bezier(0.4,0,0.2,1);
+        }
+        .bar-equity  { background: linear-gradient(90deg, #3a7bd5, #5a9df5); }
+        .bar-debt    { background: linear-gradient(90deg, #00c9a7, #89f7e4); }
+        .bar-gold    { background: linear-gradient(90deg, #f7c948, #f9d96b); }
+
+        .insight-box {
+            background: linear-gradient(135deg, #f0f7ff, #f5fffc);
+            border-left: 4px solid #3a7bd5;
+            border-radius: 10px;
+            padding: 12px 16px;
+            font-size: 13px;
+            color: #334;
+            margin-top: 16px;
+            line-height: 1.6;
+        }
+
+        /* ── History table card (full-width) ── */
         .history-card {
             background: white;
-            border-radius: 16px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+            border-radius: 18px;
+            box-shadow: 0 6px 24px rgba(0,0,0,0.08);
             overflow: hidden;
+            margin-bottom: 22px;
         }
         .history-card-header {
             background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             color: white;
-            padding: 18px 24px;
-            font-size: 18px;
-            font-weight: bold;
+            padding: 16px 24px;
+            font-size: 16px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        thead tr {
-            background: #f4f6fb;
-        }
+        table { width: 100%; border-collapse: collapse; }
+        thead tr { background: #f4f6fb; }
         th {
-            padding: 14px 18px;
+            padding: 13px 18px;
             text-align: left;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 600;
             color: var(--text-muted);
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
         td {
-            padding: 14px 18px;
-            font-size: 15px;
+            padding: 13px 18px;
+            font-size: 14px;
             border-bottom: 1px solid #f0f2f8;
         }
         tbody tr:last-child td { border-bottom: none; }
@@ -78,49 +289,43 @@
             display: inline-block;
             padding: 4px 12px;
             border-radius: 20px;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 600;
         }
         .badge-low    { background: #e8f5e9; color: #2e7d32; }
         .badge-medium { background: #fff3e0; color: #e65100; }
         .badge-high   { background: #fdeaea; color: #c62828; }
         .empty-state {
-            padding: 60px;
+            padding: 52px;
             text-align: center;
             color: var(--text-muted);
         }
-        .empty-state i { font-size: 48px; margin-bottom: 16px; color: #dce1f0; }
-        .nav-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 24px;
-        }
-        .nav-bar h1 { margin: 0; font-size: 26px; color: white; }
-        .nav-links a {
-            color: white;
-            text-decoration: none;
-            margin-left: 20px;
-            font-weight: 600;
-            opacity: 0.9;
-            transition: opacity 0.2s;
-        }
-        .nav-links a:hover { opacity: 1; }
+        .empty-state i { font-size: 44px; margin-bottom: 14px; color: #dce1f0; display: block; }
     </style>
 </head>
 <body>
 <div class="dashboard-wrapper">
 
+    <!-- ── Nav ── -->
     <div class="nav-bar">
-        <h1>📊 Investment History</h1>
+        <h1>📊 InvestSmart Dashboard</h1>
         <div class="nav-links">
-            <a href="/"><i class="fas fa-home"></i> Home</a>
+            <a href="/home"><i class="fas fa-home"></i> Home</a>
             <a href="/chatbot"><i class="fas fa-robot"></i> Chatbot</a>
             <a href="/logout" style="color: #f8c8c8;"><i class="fas fa-sign-out-alt"></i> Logout</a>
         </div>
     </div>
 
-    <!-- Stats Row -->
+    <!-- ── Dynamic Greeting Banner ── -->
+    <div class="greeting-banner">
+        <div class="greeting-icon" id="greetingIcon">👋</div>
+        <div class="greeting-text">
+            <h2 id="greetingMsg">Welcome, {{ username }}</h2>
+            <p id="greetingDate"></p>
+        </div>
+    </div>
+
+    <!-- ── Stats Row ── -->
     {% if history %}
     <div class="stats-grid">
         <div class="stat-card">
@@ -142,7 +347,136 @@
     </div>
     {% endif %}
 
-    <!-- History Table -->
+    <!-- ── Two-Column: Portfolio Recommender + Quick Tips ── -->
+    <div class="main-grid">
+
+        <!-- Portfolio Recommendation -->
+        <div class="section-card">
+            <div class="section-header">
+                <i class="fas fa-chart-pie"></i> Portfolio Recommender
+            </div>
+            <div class="section-body">
+                <form class="rec-form" id="recForm" onsubmit="generateRecommendation(event)">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="rec-age">Age</label>
+                            <input type="number" id="rec-age" placeholder="e.g. 28" min="18" max="80" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="rec-income">Monthly Income (₹)</label>
+                            <input type="number" id="rec-income" placeholder="e.g. 50000" min="0" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="rec-risk">Risk Tolerance</label>
+                            <select id="rec-risk" required>
+                                <option value="" disabled selected>Select</option>
+                                <option value="Low">Low</option>
+                                <option value="Medium">Medium</option>
+                                <option value="High">High</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="rec-duration">Duration (Years)</label>
+                            <input type="number" id="rec-duration" placeholder="e.g. 5" min="1" max="40" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="rec-btn">
+                        <i class="fas fa-wand-magic-sparkles"></i> Generate Recommendation
+                    </button>
+                </form>
+
+                <!-- Result -->
+                <div id="portfolio-result">
+                    <div class="portfolio-title">
+                        <i class="fas fa-chart-donut"></i> Recommended Portfolio
+                    </div>
+
+                    <div class="alloc-bar-wrap">
+                        <div class="alloc-label-row">
+                            <span>📈 Equity</span>
+                            <span id="eq-pct">—</span>
+                        </div>
+                        <div class="alloc-bar-bg">
+                            <div class="alloc-bar-fill bar-equity" id="eq-bar" style="width:0%"></div>
+                        </div>
+                    </div>
+
+                    <div class="alloc-bar-wrap">
+                        <div class="alloc-label-row">
+                            <span>🏦 Debt</span>
+                            <span id="debt-pct">—</span>
+                        </div>
+                        <div class="alloc-bar-bg">
+                            <div class="alloc-bar-fill bar-debt" id="debt-bar" style="width:0%"></div>
+                        </div>
+                    </div>
+
+                    <div class="alloc-bar-wrap">
+                        <div class="alloc-label-row">
+                            <span>🥇 Gold</span>
+                            <span id="gold-pct">—</span>
+                        </div>
+                        <div class="alloc-bar-bg">
+                            <div class="alloc-bar-fill bar-gold" id="gold-bar" style="width:0%"></div>
+                        </div>
+                    </div>
+
+                    <div class="insight-box" id="insight-box"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Tips -->
+        <div class="section-card">
+            <div class="section-header">
+                <i class="fas fa-lightbulb"></i> Smart Financial Tips
+            </div>
+            <div class="section-body" style="padding: 18px 22px;">
+                <ul style="list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:14px;">
+                    <li style="display:flex; gap:12px; align-items:flex-start;">
+                        <span style="font-size:22px; flex-shrink:0;">🛡️</span>
+                        <div>
+                            <strong style="font-size:13px; color:#1f3c88;">Build an Emergency Fund First</strong>
+                            <p style="font-size:12px; color:#7f8c8d; margin:3px 0 0;">Keep 3–6 months of expenses in a liquid account before investing.</p>
+                        </div>
+                    </li>
+                    <li style="display:flex; gap:12px; align-items:flex-start;">
+                        <span style="font-size:22px; flex-shrink:0;">📅</span>
+                        <div>
+                            <strong style="font-size:13px; color:#1f3c88;">Invest via SIP Regularly</strong>
+                            <p style="font-size:12px; color:#7f8c8d; margin:3px 0 0;">Systematic Investment Plans reduce timing risk and build discipline.</p>
+                        </div>
+                    </li>
+                    <li style="display:flex; gap:12px; align-items:flex-start;">
+                        <span style="font-size:22px; flex-shrink:0;">🌐</span>
+                        <div>
+                            <strong style="font-size:13px; color:#1f3c88;">Diversify Your Portfolio</strong>
+                            <p style="font-size:12px; color:#7f8c8d; margin:3px 0 0;">Never put all money in one asset. Spread across equity, debt, and gold.</p>
+                        </div>
+                    </li>
+                    <li style="display:flex; gap:12px; align-items:flex-start;">
+                        <span style="font-size:22px; flex-shrink:0;">⏳</span>
+                        <div>
+                            <strong style="font-size:13px; color:#1f3c88;">Let Compounding Work</strong>
+                            <p style="font-size:12px; color:#7f8c8d; margin:3px 0 0;">The longer you invest, the more compounding grows your wealth exponentially.</p>
+                        </div>
+                    </li>
+                    <li style="display:flex; gap:12px; align-items:flex-start;">
+                        <span style="font-size:22px; flex-shrink:0;">📊</span>
+                        <div>
+                            <strong style="font-size:13px; color:#1f3c88;">Review Annually</strong>
+                            <p style="font-size:12px; color:#7f8c8d; margin:3px 0 0;">Rebalance your portfolio once a year to stay aligned with your goals.</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ── Investment History ── -->
     <div class="history-card">
         <div class="history-card-header">
             <i class="fas fa-history"></i> Your Investment Recommendations
@@ -162,7 +496,7 @@
             <tbody>
                 {% for row in history %}
                 <tr>
-                    <td><i class="fas fa-calendar-alt" style="color: var(--secondary-color); margin-right: 6px;"></i>{{ row.date }}</td>
+                    <td><i class="fas fa-calendar-alt" style="color:var(--secondary-color); margin-right:6px;"></i>{{ row.date }}</td>
                     <td><strong>₹{{ row.amount }}</strong></td>
                     <td>
                         {% if row.risk_level == 'Low' %}
@@ -183,15 +517,99 @@
         <div class="empty-state">
             <i class="fas fa-chart-bar"></i>
             <p>No investment history yet.</p>
-            <a href="/" style="color: var(--secondary-color); font-weight: bold;">Make your first prediction →</a>
+            <a href="/home" style="color:var(--secondary-color); font-weight:600;">Make your first prediction →</a>
         </div>
         {% endif %}
     </div>
 
-    <div style="text-align:center; margin-top: 24px;">
-        <a href="/" class="back-btn" style="display: inline-block; width: auto; padding: 12px 32px;">← Back to Advisor</a>
+    <div style="text-align:center; margin-top:10px; margin-bottom:30px;">
+        <a href="/home" class="back-btn" style="display:inline-block; width:auto; padding:12px 32px;">← Back to Advisor</a>
     </div>
 
 </div>
+
+<script>
+    /* ── Dynamic Greeting ── */
+    (function() {
+        const hour = new Date().getHours();
+        const username = "{{ username }}";
+        let icon, msg, sub;
+
+        if (hour >= 5 && hour < 12) {
+            icon = '☀️';
+            msg  = `Good Morning, ${username}!`;
+            sub  = 'Ready to make smart financial moves today?';
+        } else if (hour >= 12 && hour < 18) {
+            icon = '🌤️';
+            msg  = `Good Afternoon, ${username}!`;
+            sub  = 'Check your portfolio and stay on track.';
+        } else if (hour >= 18 && hour < 22) {
+            icon = '🌙';
+            msg  = `Good Evening, ${username}!`;
+            sub  = 'Review today\'s investment activity.';
+        } else {
+            icon = '🌟';
+            msg  = `Welcome Back, ${username}`;
+            sub  = 'Your financial goals are always within reach.';
+        }
+
+        document.getElementById('greetingIcon').textContent = icon;
+        document.getElementById('greetingMsg').textContent  = msg;
+
+        const now = new Date();
+        const dateStr = now.toLocaleDateString('en-IN', {
+            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+        });
+        document.getElementById('greetingDate').textContent = `${sub}  •  ${dateStr}`;
+    })();
+
+    /* ── Portfolio Recommendation ── */
+    function generateRecommendation(e) {
+        e.preventDefault();
+
+        const risk     = document.getElementById('rec-risk').value;
+        const age      = parseInt(document.getElementById('rec-age').value);
+        const duration = parseInt(document.getElementById('rec-duration').value);
+
+        // Allocation table
+        const allocations = {
+            Low:    { equity: 20, debt: 60, gold: 20 },
+            Medium: { equity: 60, debt: 30, gold: 10 },
+            High:   { equity: 80, debt: 10, gold: 10 },
+        };
+
+        // Insight messages
+        const insights = {
+            Low:    'Based on your risk profile, this conservative portfolio prioritises capital protection through debt instruments and gold, while maintaining modest equity exposure for gradual growth.',
+            Medium: 'Based on your risk profile, this balanced portfolio blends equity growth with debt stability and a gold hedge — ideal for building wealth steadily over your investment horizon.',
+            High:   'Based on your risk profile, this aggressive portfolio maximises equity exposure to capture higher long-term returns. Suitable for investors comfortable with short-term market fluctuations.',
+        };
+
+        const a = allocations[risk];
+
+        // Animate bars
+        const result = document.getElementById('portfolio-result');
+        result.style.display = 'block';
+
+        // Reset bars first then animate
+        ['eq-bar','debt-bar','gold-bar'].forEach(id => {
+            document.getElementById(id).style.width = '0%';
+        });
+
+        setTimeout(() => {
+            document.getElementById('eq-bar').style.width   = a.equity + '%';
+            document.getElementById('debt-bar').style.width = a.debt   + '%';
+            document.getElementById('gold-bar').style.width = a.gold   + '%';
+        }, 60);
+
+        document.getElementById('eq-pct').textContent   = a.equity + '%';
+        document.getElementById('debt-pct').textContent = a.debt   + '%';
+        document.getElementById('gold-pct').textContent = a.gold   + '%';
+        document.getElementById('insight-box').textContent = insights[risk];
+
+        // Smooth scroll to result
+        result.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+</script>
 </body>
 </html>

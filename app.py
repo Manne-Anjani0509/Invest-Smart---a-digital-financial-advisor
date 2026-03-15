@@ -61,11 +61,16 @@ init_investments_db()
 # 2. Flask Routes
 # -----------------------------
 @app.route("/")
+def splash():
+    return render_template("splash.html")
+
+@app.route("/home")
 def home():
     if 'user_id' not in session:
         return redirect(url_for('login'))
     print("Homepage loaded")
-    return render_template("index.html")
+    username = session.get('username', 'Investor')
+    return render_template("index.html", username=username)
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -80,7 +85,7 @@ def login():
         if user and check_password_hash(user['password'], password):
             session['user_id'] = user['id']
             session['username'] = user['username']
-            return redirect(url_for('home'))
+            return redirect(url_for('home'))  # redirect to /home after login
         else:
             return render_template("login.html", error="Invalid username or password")
             
@@ -319,8 +324,8 @@ def chatbot():
                 question = question_original.lower()
                 
                 # Chatbot Intent Detection
-                if any(phrase in question for phrase in ["who are you", "your name", "what are you", "what is your name"]):
-                    response_text = "I am an AI Financial Advisor assistant designed to help beginners understand investing and make smarter financial decisions."
+                if any(phrase in question for phrase in ["who are you", "who r u", "what are you", "introduce yourself", "your name", "what is your name"]):
+                    response_text = "I am your Smart Financial Advisor from InvestSmart. I help you understand investments, financial planning, and guide you in making smarter financial decisions."
                 elif any(word in question for word in ["risk", "risk level", "risk tolerance"]):
                     response_text = "Choosing a risk level depends on your financial goals. Low risk investments include bonds or fixed deposits. Medium risk includes mutual funds or ETFs. High risk includes stocks or cryptocurrency."
                 elif any(word in question for word in ["safe", "trust", "secure", "fear", "scared", "afraid", "nervous", "worried"]):
