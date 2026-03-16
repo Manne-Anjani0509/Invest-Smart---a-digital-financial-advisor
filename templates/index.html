@@ -383,7 +383,6 @@
                     <button type="submit" class="btn-submit">
                         <i class="fas fa-magic"></i>
                         Generate Recommendation
-                        <span class="btn-arrow">→</span>
                     </button>
                 </div>
 
@@ -409,19 +408,19 @@
 
         if (hour >= 5 && hour < 12) {
             emoji    = '☀️';
-            greeting = `Good Morning, ${username} ☀️`;
+            greeting = `Good Morning, ${username}`;
             sub      = 'Start your day with smart investment decisions!';
         } else if (hour >= 12 && hour < 18) {
             emoji    = '🌤️';
-            greeting = `Good Afternoon, ${username} 🌤️`;
+            greeting = `Good Afternoon, ${username}`;
             sub      = 'A great time to review and plan your investments.';
         } else if (hour >= 18 && hour < 22) {
             emoji    = '🌙';
-            greeting = `Good Evening, ${username} 🌙`;
+            greeting = `Good Evening, ${username}`;
             sub      = 'End the day by making a smart financial move.';
         } else {
-            emoji    = '🌟';
-            greeting = `Welcome Back, ${username}`;
+            emoji    = '🌙';
+            greeting = `Good Evening, ${username}`;
             sub      = 'Your financial goals are always within reach.';
         }
 

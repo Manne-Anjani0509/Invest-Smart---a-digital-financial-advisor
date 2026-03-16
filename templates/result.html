@@ -73,6 +73,69 @@
         </div>
     </div>
 
+    {% if risk_level %}
+    <!-- ── Where to Invest Section ── -->
+    <div class="platform-section">
+        <h2>🏦 Start Investing on Trusted Platforms</h2>
+        <p class="platform-subtitle">
+            Based on your <strong>{{ risk_level }}</strong> risk profile, here are the best platforms to get started.
+        </p>
+
+        <div class="platform-container">
+
+            {% if risk_level == "Low" %}
+            <!-- LOW RISK: Groww + ET Money -->
+            <div class="platform-card">
+                <div class="platform-logo">🌱</div>
+                <p class="platform-name">Groww</p>
+                <p class="platform-desc">Beginner-friendly platform for mutual funds and SIP investing.</p>
+                <a href="https://groww.in" target="_blank" class="invest-btn">Open Groww</a>
+            </div>
+            <div class="platform-card">
+                <div class="platform-logo">💰</div>
+                <p class="platform-name">ET Money</p>
+                <p class="platform-desc">Smart mutual fund investing with goal-based planning tools.</p>
+                <a href="https://www.etmoney.com" target="_blank" class="invest-btn">Open ET Money</a>
+            </div>
+
+            {% elif risk_level == "Medium" %}
+            <!-- MEDIUM RISK: Groww + Upstox -->
+            <div class="platform-card">
+                <div class="platform-logo">🌱</div>
+                <p class="platform-name">Groww</p>
+                <p class="platform-desc">Invest in mutual funds, ETFs, and stocks on one platform.</p>
+                <a href="https://groww.in" target="_blank" class="invest-btn">Open Groww</a>
+            </div>
+            <div class="platform-card">
+                <div class="platform-logo">🚀</div>
+                <p class="platform-name">Upstox</p>
+                <p class="platform-desc">Popular platform for stocks, ETFs, and mutual funds investing.</p>
+                <a href="https://upstox.com" target="_blank" class="invest-btn">Open Upstox</a>
+            </div>
+
+            {% else %}
+            <!-- HIGH RISK: Zerodha + Angel One -->
+            <div class="platform-card">
+                <div class="platform-logo">⚡</div>
+                <p class="platform-name">Zerodha</p>
+                <p class="platform-desc">India's leading advanced platform for stock and ETF trading.</p>
+                <a href="https://zerodha.com" target="_blank" class="invest-btn">Open Zerodha</a>
+            </div>
+            <div class="platform-card">
+                <div class="platform-logo">👼</div>
+                <p class="platform-name">Angel One</p>
+                <p class="platform-desc">Advanced trading tools for stocks, F&O, and ETFs.</p>
+                <a href="https://www.angelone.in" target="_blank" class="invest-btn">Open Angel One</a>
+            </div>
+            {% endif %}
+
+        </div><!-- /.platform-container -->
+        <p style="font-size: 11px; color: #aab0bc; text-align: center; margin-top: 14px;">
+            🔒 No account or API connection required. Links open official websites in a new tab.
+        </p>
+    </div><!-- /.platform-section -->
+    {% endif %}
+
     <div style="display: flex; gap: 12px; margin-top: 20px;">
         <a href="/home" class="back-btn" style="flex: 1;">Try Another Profile</a>
         <a href="/dashboard" class="back-btn" style="flex: 1; background: linear-gradient(135deg, #1f3c88, #3a7bd5);">📊 View History</a>
