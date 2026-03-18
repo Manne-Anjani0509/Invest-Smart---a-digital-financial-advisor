@@ -240,6 +240,34 @@ def predict():
             pass
 
 
+        # Build risk meter details (used by both single and diversified)
+        if risk_level == "Low":
+            risk_meter = "██░░░░░░"
+            risk_label = "Conservative Investor"
+        elif risk_level == "Medium":
+            risk_meter = "████░░░░"
+            risk_label = "Balanced Investor"
+        else:
+            risk_meter = "████████"
+            risk_label = "Aggressive Investor"
+
+        # Build risk-based platforms list (used by both single and diversified)
+        if risk_level == "Low":
+            platforms = [
+                {"name": "Groww",  "icon": "🌱", "desc": "Beginner-friendly platform for mutual funds and SIP investing.",        "url": "https://groww.in"},
+                {"name": "Upstox", "icon": "🚀", "desc": "Popular platform for stocks, ETFs, and mutual funds investing.",        "url": "https://upstox.com"},
+            ]
+        elif risk_level == "Medium":
+            platforms = [
+                {"name": "Groww",  "icon": "🌱", "desc": "Invest in mutual funds, ETFs, and stocks on one platform.",            "url": "https://groww.in"},
+                {"name": "Upstox", "icon": "🚀", "desc": "Popular platform for stocks, ETFs, and mutual funds investing.",        "url": "https://upstox.com"},
+            ]
+        else:  # High
+            platforms = [
+                {"name": "Zerodha",   "icon": "⚡",  "desc": "India's leading advanced platform for stock and ETF trading.",         "url": "https://zerodha.com"},
+                {"name": "Angel One", "icon": "👼", "desc": "Advanced trading tools for stocks, F&O, and ETFs.",                    "url": "https://www.angelone.in"},
+            ]
+
         if investment_mode == "single":
             return render_template(
                 "result.html",
@@ -249,7 +277,11 @@ def predict():
                 monthly_equivalent=monthly_equivalent,
                 sip_invested=sip_invested,
                 sip_fv=sip_fv,
-                sip_profit=sip_profit
+                sip_profit=sip_profit,
+                risk_level=risk_level,
+                risk_meter=risk_meter,
+                risk_label=risk_label,
+                platforms=platforms
             )
 
         # Map risk level and duration to portfolio allocation
@@ -281,16 +313,6 @@ def predict():
             allocated_amount = int(investment_amount * percentage / 100)
             portfolio[asset] = {"percent": percentage, "amount": allocated_amount}
 
-        # Generate Risk Visualizer UI details
-        if risk_level == "Low":
-            risk_meter = "██░░░░░░"
-            risk_label = "Conservative Investor"
-        elif risk_level == "Medium":
-            risk_meter = "████░░░░"
-            risk_label = "Balanced Investor"
-        else: 
-            risk_meter = "████████"
-            risk_label = "Aggressive Investor"
 
         return render_template(
             "result.html",
@@ -303,7 +325,8 @@ def predict():
             monthly_equivalent=monthly_equivalent,
             sip_invested=sip_invested,
             sip_fv=sip_fv,
-            sip_profit=sip_profit
+            sip_profit=sip_profit,
+            platforms=platforms
         )
 
     except Exception as e:
@@ -384,3 +407,4 @@ def dashboard():
 
 if __name__ == "__main__":
     app.run(debug=True, use_reloader=False)
+     
