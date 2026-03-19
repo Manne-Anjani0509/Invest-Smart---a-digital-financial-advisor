@@ -251,21 +251,26 @@ def predict():
             risk_meter = "████████"
             risk_label = "Aggressive Investor"
 
-        # Build risk-based platforms list (used by both single and diversified)
+        # Build risk-based platform lists (lists of dictionaries)
         if risk_level == "Low":
             platforms = [
-                {"name": "Groww",  "icon": "🌱", "desc": "Beginner-friendly platform for mutual funds and SIP investing.",        "url": "https://groww.in"},
-                {"name": "Upstox", "icon": "🚀", "desc": "Popular platform for stocks, ETFs, and mutual funds investing.",        "url": "https://upstox.com"},
+                {"name": "Groww",  "desc": "Beginner-friendly platform for mutual funds and SIP investing.",        "url": "https://groww.in"},
+                {"name": "Upstox", "desc": "Simple and fast platform for stocks, ETFs, and basic investing.",       "url": "https://upstox.com"}
             ]
         elif risk_level == "Medium":
             platforms = [
-                {"name": "Groww",  "icon": "🌱", "desc": "Invest in mutual funds, ETFs, and stocks on one platform.",            "url": "https://groww.in"},
-                {"name": "Upstox", "icon": "🚀", "desc": "Popular platform for stocks, ETFs, and mutual funds investing.",        "url": "https://upstox.com"},
+                {"name": "Groww",   "desc": "Invest in mutual funds, ETFs, and stocks on one platform.",            "url": "https://groww.in"},
+                {"name": "Zerodha", "desc": "India's leading platform with advanced charting and direct funds.",    "url": "https://zerodha.com"}
             ]
-        else:  # High
+        elif risk_level == "High":
             platforms = [
-                {"name": "Zerodha",   "icon": "⚡",  "desc": "India's leading advanced platform for stock and ETF trading.",         "url": "https://zerodha.com"},
-                {"name": "Angel One", "icon": "👼", "desc": "Advanced trading tools for stocks, F&O, and ETFs.",                    "url": "https://www.angelone.in"},
+                {"name": "Zerodha",   "desc": "India's leading advanced platform for stock and ETF trading.",       "url": "https://zerodha.com"},
+                {"name": "Angel One", "desc": "Research-driven investment platform with advanced trading tools.",   "url": "https://www.angelone.in"}
+            ]
+        else:
+            platforms = [
+                {"name": "Groww",  "desc": "Beginner-friendly platform.", "url": "https://groww.in"},
+                {"name": "Upstox", "desc": "Simple investing platform.",  "url": "https://upstox.com"}
             ]
 
         if investment_mode == "single":

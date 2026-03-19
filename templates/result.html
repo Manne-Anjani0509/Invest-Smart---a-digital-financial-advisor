@@ -7,10 +7,27 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <style>
-        .view-more-wrap {
+        /* Platform card base style */
+        .platform-card {
+            background: #ffffff;
+            border-radius: 14px;
+            padding: 20px 18px;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+            border: 1px solid #dce1f0;
+            flex: 1;
+            min-width: 200px;
+            max-width: 280px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             text-align: center;
-            margin-top: 18px;
+            gap: 8px;
+            transition: transform 0.25s ease;
         }
+        .platform-card:hover {
+            transform: translateY(-3px);
+        }
+        /* View More button */
         .view-more-btn {
             display: inline-block;
             padding: 11px 30px;
@@ -20,7 +37,8 @@
             font-size: 14px;
             font-weight: 600;
             border-radius: 30px;
-            text-decoration: none;
+            border: none;
+            cursor: pointer;
             letter-spacing: 0.3px;
             box-shadow: 0 6px 18px rgba(58,123,213,0.35);
             transition: all 0.28s ease;
@@ -111,11 +129,12 @@
         </p>
 
         <!-- Platform Cards -->
-        <div style="display: flex; gap: 16px; flex-wrap: wrap; justify-content: center;">
+        <div style="display: flex; gap: 16px; flex-wrap: wrap; justify-content: center;" class="platform-container">
             {% for p in platforms %}
-            <div style="background: #ffffff; border-radius: 14px; padding: 20px 18px; box-shadow: 0 4px 14px rgba(0,0,0,0.08); border: 1px solid #dce1f0; flex: 1; min-width: 200px; max-width: 280px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 8px; transition: transform 0.25s ease;">
-                <div style="font-size: 34px; line-height: 1;">{{ p.icon }}</div>
-                <p style="font-size: 15px; font-weight: 700; color: #1f3c88; margin: 0;">{{ p.name }}</p>
+            <div class="platform-card"
+                 style="background: #ffffff; border-radius: 14px; padding: 20px 18px; box-shadow: 0 4px 14px rgba(0,0,0,0.08); border: 1px solid #dce1f0; flex: 1; min-width: 200px; max-width: 280px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 8px; transition: transform 0.25s ease;">
+                <div style="font-size: 34px; line-height: 1;">🏦</div>
+                <h3 style="font-size: 15px; font-weight: 700; color: #1f3c88; margin: 0;">{{ p.name }}</h3>
                 <p style="font-size: 12px; color: #7f8c8d; margin: 0; line-height: 1.5;">{{ p.desc }}</p>
                 <a href="{{ p.url }}" target="_blank"
                    style="display: inline-block; background: linear-gradient(135deg, #3a7bd5, #00c9a7); color: #fff; padding: 8px 20px; border-radius: 20px; font-size: 12px; font-weight: 600; text-decoration: none; margin-top: 6px; box-shadow: 0 3px 8px rgba(0,201,167,0.25);">
@@ -123,18 +142,9 @@
                 </a>
             </div>
             {% endfor %}
-        </div><!-- /.cards row -->
-
-        <!-- View More Platforms button -->
-        <div style="text-align: center; margin-top: 20px;">
-            <a href="https://www.google.com/search?q=best+investment+platforms+in+India"
-               target="_blank"
-               style="display: inline-block; padding: 11px 30px; background: linear-gradient(135deg, #1f3c88, #3a7bd5); color: #fff; font-size: 14px; font-weight: 600; border-radius: 30px; text-decoration: none; box-shadow: 0 6px 18px rgba(58,123,213,0.35);">
-                View More Platforms &rarr;
-            </a>
         </div>
 
-        <p style="font-size: 11px; color: #aab0bc; text-align: center; margin-top: 14px; margin-bottom: 0;">
+        <p style="font-size: 11px; color: #aab0bc; text-align: center; margin-top: 20px; margin-bottom: 0;">
             🔒 No account or API connection required. Links open official websites in a new tab.
         </p>
     </div><!-- /.platform-section -->
@@ -185,6 +195,7 @@
         });
     });
     {% endif %}
+
 </script>
 </body>
 </html>
